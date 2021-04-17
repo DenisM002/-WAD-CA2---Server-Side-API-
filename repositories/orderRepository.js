@@ -12,9 +12,10 @@ const SQL_SELECT_ALL = 'SELECT * FROM dbo.orderDetails ORDER BY _id ASC for json
 
 // Create a new order and return result
 const SQL_INSERT = 'INSERT INTO dbo.orderDetails (orderDetails_name, orderDetails_mobile, orderDetails_email, orderDetails_burger, orderDetails_kebab, orderDetails_chip, orderDetails_drink, orderDetails_info) VALUES (@orderName, @orderMobile, @orderEmail, @orderBurger, @orderKebab, @orderChip, @orderDrink, @orderInfo); SELECT * from dbo.orderDetails WHERE _id = SCOPE_IDENTITY();';
-// Update existing product
+// Update existing order
 const SQL_UPDATE = 'UPDATE dbo.orderDetails SET orderDetails_name = @orderName, orderDetails_mobile = @orderMobile, orderDetails_email = @orderEmail, orderDetails_burger = @orderBurger, orderDetails_kebab = @orderkebab, orderDetails_chip = @orderChip, orderDetails_drink = @orderDrink, orderDetails_info = @orderInfo  WHERE _id = @id; SELECT * FROM dbo.orderDetails WHERE _id = @id;';
-
+// Delete existing order
+const SQL_DELETE = 'DELETE FROM dbo.orderDetails WHERE _id = @id;';
 
 // Get all orders
 // This is an async function named getOrders defined using ES6 => syntax
@@ -43,7 +44,7 @@ let getOrders = async () => {
     return orders;
 };
 
-// create a new product - parameter: a validated product model object
+// create a new order - parameter: a validated order model object
 let createOrder = async (order) => {
     // Declare constants and variables
     let insertedOrder;
@@ -71,12 +72,12 @@ let createOrder = async (order) => {
     } catch (err) {
         console.log('DB Error - error inserting a new order: ', err.message);
     }
-    // Return the product data
+    // Return the order data
     return insertedOrder;
 
 };
 
-// create a new product - parameter: a validated product model object
+// create a new order - parameter: a validated order model object
 let updateOrder = async (order) => {
     // Declare constants and variables
     let updatedOrder;
@@ -105,9 +106,35 @@ let updateOrder = async (order) => {
     } catch (err) {
         console.log('DB Error - error updating order: ', err.message);
     }
-    // Return the product data
+    // Return the order data
     return updatedOrder;
 
+};
+
+// delete a order
+let deleteOrder = async (orderId) => {
+    // record how many rows were deleted  > 0 = success
+    let rowsAffected = 0;
+    // returns a single order with matching id
+    try {
+        // Get a DB connection and execute SQL
+        const pool = await dbConnPoolPromise
+        const result = await pool.request()
+            // set @id parameter in the query
+            .input('id', sql.Int, orderId)
+            // execute query
+            .query(SQL_DELETE);
+
+        // Was the order deleted?    
+        rowsAffected = Number(result.rowsAffected);
+    } catch (err) {
+        console.log('DB Error - get order by id: ', err.message);
+    }
+    // Nothing deleted
+    if (rowsAffected === 0)
+        return false;
+    // successful delete
+    return true;
 };
 
 
@@ -115,5 +142,6 @@ let updateOrder = async (order) => {
 module.exports = {
     getOrders,
     createOrder,
-    updateOrder
+    updateOrder,
+    deleteOrder
 };

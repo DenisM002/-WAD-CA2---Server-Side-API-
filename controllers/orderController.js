@@ -64,6 +64,24 @@ router.put('/', async (req, res) => {
     }
 });
 
+// DELETE single order by id.
+// Takes in ONLY the id of the order from the client!!
+router.delete('/:id', async (req, res) => {
+    // read value of id parameter from the request url
+    const orderId = req.params.id;
+    // If validation passed execute query and return results
+    // returns a single order with matching id
+    try {
+        // Send response with JSON result    
+        const result = await orderService.deleteOrder(orderId);
+        res.json(result);
+
+    } catch (err) {
+        res.status(500);
+        res.send(err.message);
+    }
+});
+
 
 
 // Export as a module

@@ -3,7 +3,7 @@
 
 // Require the orderValidator
 const orderValidator = require('../validators/orderValidators.js');
-const baseValidator = require('../validators/baseValidators')
+const baseValidators = require('../validators/baseValidators')
 
 // require the database connection
 const orderRepository = require('../repositories/orderRepository.js');
@@ -53,10 +53,28 @@ let updateOrder = async (order) => {
     return updatedOrder;
 };
 
+// Delete a single order by id
+// Validate input, call repository, return result
+let deleteOrder = async (orderId) => {
+    let deleteResult = false;
+    // Validate input
+    // appending + '' to numbers as the validator only works with strings
+    if (!baseValidators.id(orderId)) {
+        console.log("deleteOrder service error: invalid id parameter");
+        return false;
+    }
+    // delete order by id
+    // returnds result: true or false
+    deleteResult = await orderRepository.deleteOrder(orderId);
+    // return true if successfully deleted
+    return deleteResult;
+};
+
 // Module exports
 // expose these functions
 module.exports = {
     getOrders,
     createOrder,
-    updateOrder
+    updateOrder,
+    deleteOrder
 };
