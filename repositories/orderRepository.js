@@ -73,6 +73,41 @@ let createOrder = async (order) => {
 
 };
 
+// create a new product - parameter: a validated product model object
+let updateOrder = async (order) => {
+    // Declare constants and variables
+    let updatedOrder;
+    // Insert a new order
+    try {
+        // Get a DB connection and execute SQL
+        const pool = await dbConnPoolPromise
+        const result = await pool.request()
+            // set named parameter(s) in query
+            // checks for potential sql injection
+            
+            .input('id', sql.Int, order.orderDetails_id)
+            .input('orderName', sql.NVarChar, order.orderDetails_name)
+            .input('orderMobile', sql.NVarChar, order.orderDetails_mobile)
+            .input('orderEmail', sql.NVarChar, order.orderDetails_email)
+            .input('orderBurger', sql.Int, order.orderDetails_burger)
+            .input('orderKebab', sql.Int, order.orderDetails_kebab)
+            .input('orderChip', sql.Int, order.orderDetails_chip)
+            .input('orderDrink', sql.Int, order.orderDetails_drink)
+            .input('orderInfo', sql.Text, order.orderDetails_info)
+                
+            // Execute Query
+            .query(SQL_UPDATE)
+
+        // The newly inserted order is returned by the query
+        insertedPost = result.recordset[0];
+    } catch (err) {
+        console.log('DB Error - error updating order: ', err.message);
+    }
+    // Return the product data
+    return updatedOrder;
+
+};
+
 
 // Export 
 module.exports = {

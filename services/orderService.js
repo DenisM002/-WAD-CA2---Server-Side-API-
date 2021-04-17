@@ -1,13 +1,9 @@
 // Dependencies
 // Input validation package
-/*
-    Do not have validation correct yet!!
-const baseValidators = require('../validators/baseValidators.js');
-*/
-
 
 // Require the orderValidator
 const orderValidator = require('../validators/orderValidators.js');
+const baseValidator = require('../validators/baseValidators')
 
 // require the database connection
 const orderRepository = require('../repositories/orderRepository.js');
@@ -20,14 +16,13 @@ let getOrders = async () => {
 };
 
 // Create new order
-// Insert a new Order
 // This function accepts order data as a parameter from the controller.
 let createOrder = async (order) => {
     // declare variables
     let newlyInsertedOrder;
     // Call the order validator - kept seperate to avoid clutter here
     let validatedOrder = orderValidator.validateNewOrder(order);
-    // If validation returned a order object - save to database
+    // If validation returned an order object - save to database
     if (validatedOrder != null) {
         newlyInsertedOrder = await orderRepository.createOrder(validatedOrder);
     } else {
