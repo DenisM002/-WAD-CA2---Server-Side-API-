@@ -21,7 +21,7 @@ let createOrder = async (order) => {
     // declare variables
     let newlyInsertedOrder;
     // Call the order validator - kept seperate to avoid clutter here
-    let validatedOrder = orderValidator.validateNewOrder(order);
+    let validatedOrder = orderValidator.validateOrder(order);
     // If validation returned an order object - save to database
     if (validatedOrder != null) {
         newlyInsertedOrder = await orderRepository.createOrder(validatedOrder);
@@ -35,10 +35,28 @@ let createOrder = async (order) => {
     return newlyInsertedOrder;
 };
 
+let updateOrder = async (order) => {
+    // declare variables
+    let updatedOrder;
+    // Call the order validator - kept seperate to avoid clutter here
+    let validatedOrder = orderValidator.validateOrder(order);
+    // If validation returned an order object - save to database
+    if (validatedOrder != null) {
+        updatedOrder = await orderRepository.updateOrder(validatedOrder);
+    } else {
+        // order data failed validation
+        updatedOrder = { "error": "invalid order" };
+        // log the result
+        console.log("orderService.updateOrder(): form data validate failed");
+    }
+    // return the newly inserted order
+    return updatedOrder;
+};
 
 // Module exports
 // expose these functions
 module.exports = {
     getOrders,
-    createOrder
+    createOrder,
+    updateOrder
 };

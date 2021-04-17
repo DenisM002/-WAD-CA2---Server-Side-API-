@@ -12,6 +12,9 @@ const SQL_SELECT_ALL = 'SELECT * FROM dbo.orderDetails ORDER BY _id ASC for json
 
 // Create a new order and return result
 const SQL_INSERT = 'INSERT INTO dbo.orderDetails (orderDetails_name, orderDetails_mobile, orderDetails_email, orderDetails_burger, orderDetails_kebab, orderDetails_chip, orderDetails_drink, orderDetails_info) VALUES (@orderName, @orderMobile, @orderEmail, @orderBurger, @orderKebab, @orderChip, @orderDrink, @orderInfo); SELECT * from dbo.orderDetails WHERE _id = SCOPE_IDENTITY();';
+// Update existing product
+const SQL_UPDATE = 'UPDATE dbo.orderDetails SET orderDetails_name = @orderName, orderDetails_mobile = @orderMobile, orderDetails_email = @orderEmail, orderDetails_burger = @orderBurger, orderDetails_kebab = @orderkebab, orderDetails_chip = @orderChip, orderDetails_drink = @orderDrink, orderDetails_info = @orderInfo  WHERE _id = @id; SELECT * FROM dbo.orderDetails WHERE _id = @id;';
+
 
 // Get all orders
 // This is an async function named getOrders defined using ES6 => syntax
@@ -84,8 +87,7 @@ let updateOrder = async (order) => {
         const result = await pool.request()
             // set named parameter(s) in query
             // checks for potential sql injection
-            
-            .input('id', sql.Int, order.orderDetails_id)
+            .input('id', sql.Int, order._id)
             .input('orderName', sql.NVarChar, order.orderDetails_name)
             .input('orderMobile', sql.NVarChar, order.orderDetails_mobile)
             .input('orderEmail', sql.NVarChar, order.orderDetails_email)
@@ -112,5 +114,6 @@ let updateOrder = async (order) => {
 // Export 
 module.exports = {
     getOrders,
-    createOrder
+    createOrder,
+    updateOrder
 };

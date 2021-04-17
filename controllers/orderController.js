@@ -44,6 +44,27 @@ router.post('/', async (req, res) => {
     }
 });
 
+router.put('/', async (req, res) => {
+
+    // Request body contains the post data
+    const order = req.body;
+    // show what was copied in the console (server side)
+    console.log("orderController update: ", order);
+    // Create new posts
+    try {
+        // Call function to createPost
+        const result = await orderService.updateOrder(order);
+        // send json result via HTTP
+        res.json(result);
+
+        // Catch and send any errors  
+    } catch (err) {
+        res.status(500);
+        res.send(err.message);
+    }
+});
+
+
 
 // Export as a module
 module.exports = router;

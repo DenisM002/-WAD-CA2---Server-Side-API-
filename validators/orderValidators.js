@@ -9,7 +9,7 @@ const OrderDetails = require('../models/orderDetails.js');
 // Validate the body data, sent by the client, for a new order
 // formOrder represents the data filled in a form
 // It needs to be validated before using in the application
-let validateNewOrder = (formOrder) => {
+let validateOrder = (formOrder) => {
     // Declare constants and variables
     let validatedOrder;
 
@@ -19,6 +19,11 @@ let validateNewOrder = (formOrder) => {
     // debug to console - if no data
     if (formOrder === null) {
         console.log("validateNewOrder(): Parameter is null");
+    };
+
+    // Check if order has an id, i.e already exists. New orders will not have an id.
+    if (formOrder.hasOwnProperty('_id') ) {
+        orderID = formOrder._id;
     }
 
     // Validate form data for new order fields
@@ -41,7 +46,7 @@ let validateNewOrder = (formOrder) => {
         // create a new OrderDetails instance based on OrderDetails model object
         // no value for order id (passed as null)
         validatedOrder = new OrderDetails (
-            null,
+            orderID,
             // escape is to sanitize - it removes/ encodes any html tags
             validator.escape(formOrder.orderDetails_name),
             validator.escape(formOrder.orderDetails_mobile),
@@ -64,5 +69,5 @@ let validateNewOrder = (formOrder) => {
 
 
 module.exports = {
-    validateNewOrder,
+    validateOrder,
 }
