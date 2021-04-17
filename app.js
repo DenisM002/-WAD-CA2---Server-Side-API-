@@ -37,7 +37,7 @@ app.options('*', cors()); // include before other routes
 // The default route 
 app.use('/', require('./controllers/index'));
 // route to /post
-app.use('/post', require('./controllers/postController'));
+app.use('/orders', require('./controllers/orderController'));
 
 
 // catch 404 and forward to error handler

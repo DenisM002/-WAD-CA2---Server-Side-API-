@@ -1,19 +1,19 @@
 const router = require('express').Router();
-const postService = require('../services/postService.js');
+const orderService = require('../services/orderService.js');
 
 // Auth0
 const { authConfig, checkJwt, checkAuth } = require('../middleware/jwtAuth.js');
 
 // GET listing of all posts
-// Address http://server:port/product
+// Address http://server:orders
 // returns JSON
 router.get('/', async (req, res) => {
 
     // Get all posts
     try {
-        // Call the product service to get a list of posts
-        // getPosts() is an async function so use await
-        const result = await postService.getPosts();
+        // Call the order service to get a list of orders
+        // getOrders() is an async function so use await
+        const result = await orderService.getOrders();
         // send json result via HTTP
         res.json(result);
 
@@ -27,13 +27,13 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
 
     // Request body contains the post data
-    const newPost = req.body;
+    const newOrder = req.body;
     // show what was copied in the console (server side)
-    console.log("productController: ", newPost);
+    console.log("orderController: ", newOrder);
     // Create new posts
     try {
         // Call function to createPost
-        const result = await postService.createPost(newPost);
+        const result = await orderService.createOrder(newOrder);
         // send json result via HTTP
         res.json(result);
 
