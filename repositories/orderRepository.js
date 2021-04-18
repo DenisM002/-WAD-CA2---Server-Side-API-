@@ -9,13 +9,15 @@ const { sql, dbConnPoolPromise } = require('../database/db.js');
 // Get all orders from the orderDetails table
 // for json path - Tell MS SQL to return results as JSON (avoiding the need to convert here)
 const SQL_SELECT_ALL = 'SELECT * FROM dbo.orderDetails ORDER BY _id ASC for json path;';
-
 // Create a new order and return result
 const SQL_INSERT = 'INSERT INTO dbo.orderDetails (orderDetails_name, orderDetails_mobile, orderDetails_email, orderDetails_burger, orderDetails_kebab, orderDetails_chip, orderDetails_drink, orderDetails_info) VALUES (@orderName, @orderMobile, @orderEmail, @orderBurger, @orderKebab, @orderChip, @orderDrink, @orderInfo); SELECT * from dbo.orderDetails WHERE _id = SCOPE_IDENTITY();';
 // Update existing order
 const SQL_UPDATE = 'UPDATE dbo.orderDetails SET orderDetails_name = @orderName, orderDetails_mobile = @orderMobile, orderDetails_email = @orderEmail, orderDetails_burger = @orderBurger, orderDetails_kebab = @orderkebab, orderDetails_chip = @orderChip, orderDetails_drink = @orderDrink, orderDetails_info = @orderInfo  WHERE _id = @id; SELECT * FROM dbo.orderDetails WHERE _id = @id;';
 // Delete existing order
 const SQL_DELETE = 'DELETE FROM dbo.orderDetails WHERE _id = @id;';
+// Get a single product matching a id, @id
+// for json path, without_array_wrapper - use for single json result
+const SQL_SELECT_BY_ID = 'SELECT * FROM dbo.orderDetails WHERE _id = @id for json path, without_array_wrapper;';
 
 // Get all orders
 // This is an async function named getOrders defined using ES6 => syntax
@@ -137,11 +139,39 @@ let deleteOrder = async (orderId) => {
     return true;
 };
 
+// get order by id
+// This is an async function named getOrderById defined using ES6 => syntax
+let getOrderById = async (orderId) => {
+
+    let order;
+
+    // returns a single order with matching id
+    try {
+        // Get a DB connection and execute SQL
+        const pool = await dbConnPoolPromise
+        const result = await pool.request()
+            // set @id parameter in the query
+            .input('id', sql.Int, orderId)
+            // execute query
+            .query(SQL_SELECT_BY_ID);
+
+        // Send response with JSON result    
+        order = result.recordset[0];
+
+    } catch (err) {
+        console.log('DB Error - get order by id: ', err.message);
+    }
+
+    // return the order
+    return order;
+};
+
 
 // Export 
 module.exports = {
     getOrders,
     createOrder,
     updateOrder,
-    deleteOrder
+    deleteOrder,
+    getOrderById
 };

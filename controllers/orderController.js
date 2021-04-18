@@ -24,6 +24,28 @@ router.get('/', async (req, res) => {
     }
 });
 
+// GET a single product by id
+// id passed as parameter via url
+// Address http://server:port/product/:id
+// returns JSON
+router.get('/:id', async (req, res) => {
+
+    // read value of id parameter from the request url - note param and not req
+    const orderId = req.params.id;
+
+    // If validation passed execute query and return results
+    // returns a single product with matching id
+    try {
+        // Send response with JSON result    
+        let result = await orderService.getOrderById(orderId);
+        res.json(result);
+
+    } catch (err) {
+        res.status(500);
+        res.send(err.message);
+    }
+});
+
 router.post('/', async (req, res) => {
 
     // Request body contains the post data

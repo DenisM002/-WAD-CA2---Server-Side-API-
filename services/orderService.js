@@ -15,6 +15,22 @@ let getOrders = async () => {
     return orders;
 };
 
+// Get order by id
+// Validate input
+// return order
+let getOrderById = async (orderId) => {
+    // Validate input using validator module
+    // important as a bad input could crash the server or lead to an attack
+    // appending + '' to numbers as the validator only works with strings
+    if (!baseValidators.id(orderId)) {
+        console.log("getOrders service error: invalid id parameter");
+        return "invalid parameter";
+    }
+    // get order (if validation passed)
+    const order = orderRepository.getOrderById(orderId);
+    return order;
+};
+
 // Create new order
 // This function accepts order data as a parameter from the controller.
 let createOrder = async (order) => {
@@ -76,5 +92,6 @@ module.exports = {
     getOrders,
     createOrder,
     updateOrder,
-    deleteOrder
+    deleteOrder,
+    getOrderById
 };
